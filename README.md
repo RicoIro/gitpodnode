@@ -16,7 +16,7 @@ https://www.khanacademy.org/computing/computer-programming/sql
 google op local storage javascript basket
 * bestelling mailen\
 heroku specifieke oplossing, zie aldaar
-
+ 
 ## over de tools
 * gitpod online editor en hosting ontwikkelomgeving\
 https://www.gitpod.io/docs/
