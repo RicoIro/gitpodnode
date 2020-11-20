@@ -1,4 +1,3 @@
-// gebruikte pinnen
 const int ledPin =  LED_BUILTIN;
 
 // globale variabelen

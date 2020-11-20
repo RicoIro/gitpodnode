@@ -7,7 +7,7 @@ ports:
 # Command to start on workspace startup (optional)
 tasks:
   - init: |
-      psql < webwidget/sql/bootstrap_db.sql
-      psql --username=api  shop < webwidget/sql/create_tables.sql
-      psql --username=api  shop < webwidget/sql/seed.sql
-  - command: cd webwidget/src && yarn config set script-shell /bin/bash && yarn install && node index.js 
+      psql < server/sql/bootstrap_db.sql
+      psql --username=api  knikkerbaan < server/sql/create_tables.sql
+      psql --username=api  knikkerbaan < server/sql/seed.sql
+  - command: cd server/src && yarn config set script-shell /bin/bash && yarn install && node index.js 
