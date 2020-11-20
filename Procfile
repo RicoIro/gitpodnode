@@ -1,1 +1,1 @@
-web: cd src && node index.js
+web: cd webwidget/src && node index.js
