@@ -1,1 +1,1 @@
-web: cd server/src && node index.js
+web: cd server && node server-app.js

@@ -7,7 +7,9 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "/server/src/index.js"
+      "program": "${workspaceFolder}/server/server-app.js",
+      "openDebug": "openOnSessionStart",
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

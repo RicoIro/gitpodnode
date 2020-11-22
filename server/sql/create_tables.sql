@@ -1,10 +1,11 @@
-DROP TABLE IF EXISTS algemeen;
+DROP TABLE IF EXISTS baanStatus;
 DROP TABLE IF EXISTS buttonPresses;
 
-CREATE TABLE algemeen (
+CREATE TABLE baanStatus (
   ID SERIAL PRIMARY KEY,
-  naam VARCHAR(15) UNIQUE,
-  waarde INTEGER
+  status INTEGER NOT NULL,
+  tijd TIMESTAMP WITH TIME ZONE NOT NULL,
+  opmerking VARCHAR(128)
 );
 
 CREATE TABLE buttonPresses (

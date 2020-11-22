@@ -2,6 +2,7 @@
 /* -------- Algemeen server gedeelte -------- */
 /**********************************************/
 const express = require('express')
+const path = require('path');
 const bodyParser = require('body-parser')
 const app = express()
 const port = process.env.PORT || 3000;
@@ -14,15 +15,16 @@ app.use(
 )
 
 // hier zijn de statische bestanden (html, css, ...) te vinden:
-app.use(express.static('../public'))
+app.use(express.static(path.join(__dirname, '/public')));
 
 
 // bepaal wat er moet gebeuren bij verzoeken op verschillende paden / routes van je URL:
 // ⬇︎ HIER JE EIGEN AANPASSINGEN MAKEN ⬇︎
 app.get('/', (_request, response) => {response.redirect('index.html'); })
+app.get('/api/checkchanges/:widgetTimeStamp', checkChanges);
 app.get('/api/addButtonPress', addButtonPress);
 app.get('/api/getTotalPresses', getTotalPresses);
-app.get('/api/setKnikkerbaanStatus', setKnikkerbaanStatus);
+app.get('/api/setKnikkerbaanStatus/:newStatus', setKnikkerbaanStatus);
 
 
 // start de server en geef een berichtje in de console dat het gelukt is!
@@ -67,6 +69,36 @@ pool.on('connect', () => console.log('connected to db'));
 
 
 /**
+ * checkChanges
+ * 
+ * checkt of er sinds de in het request meegegeven timestamp
+ * wijzigingen zijn gedaan in de database en geeft dit terug
+ * @param _request het webrequest dat deze bewerking startte
+ * @param response het antwoord dat teruggegeven gaat worden.
+ */
+function checkChanges(_request, response) {
+  var lastWidgetChange = new Date();
+  lastWidgetChange.setTime(_request.params.widgetTimeStamp);
+  pool.query(`SELECT *
+                FROM (SELECT tijd FROM buttonPresses) AS alleTijden
+                WHERE tijd > $1`,
+                [lastWidgetChange], (error, results) => {
+                  if (error) {
+                    throw error;
+                  }
+
+                  if (results.rowCount > 0) {
+                    response.status(200).send("Update needed");
+                  }
+                  else {
+                    response.status(200).send("No update needed");
+                  }
+                  
+                });
+}
+
+
+/**
  * addButtonPress
  * 
  * voegt een nieuwe row toe aan tabel "buttonPresses"
@@ -92,11 +124,11 @@ function addButtonPress(_request, response) {
  * @param response het antwoord dat teruggegeven gaat worden.
  */
 function getTotalPresses(_request, response){
-  pool.query("SELECT waarde FROM algemeen WHERE naam = 'ButtonPresses';", (error, results) => {
+  pool.query("SELECT COUNT(*) AS totalButtonPresses, MAX(tijd) as lastTimeStamp  FROM buttonPresses;", (error, results) => {
     if (error) {
       throw error;
     }
-    response.status(200).json(results.rows);
+    response.status(200).json(results.rows[0]);
   });
 }
 
@@ -109,11 +141,11 @@ function getTotalPresses(_request, response){
  * @param response het antwoord dat teruggegeven gaat worden.
  */
 function setKnikkerbaanStatus(_request, response) {
-  const newStatus = parseInt(request.params.id);
-  pool.query("UPDATE algemeen SET waarde = $1 WHERE naam = 'BaanStatus'", [newStatus], (error, results) => {
+  const newStatus = parseInt(_request.params.newStatus);
+  pool.query("INSERT INTO baanStatus (status, tijd, opmerking) VALUES ($1, CURRENT_TIMESTAMP, $2)", [newStatus, comment], (error, results) => {
     if (error) {
       throw error;
     }
-    response.status(201).send('Status modified');
+    response.status(201).send("Status has been modified");
   });
 }
