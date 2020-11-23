@@ -1,153 +1,47 @@
-# gitpodnode
+# Eindopdracht 6V
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Notalifeform/gitpodnode)
-![6VWO Eindopdracht](https://img.shields.io/badge/6VWO-Eindopdracht-green)
+![6VWO Eindopdracht](https://img.shields.io/badge/6VWO-Eindopdracht-red)
 
-# meer technische info 
-## over de code
-* tutorial building a REST-api with postgressDB + jsnode + jsexpress\
-https://blog.logrocket.com/setting-up-a-restful-api-with-node-js-and-postgresql-d96d6fc892d8/
-* serving static files with jsexpress\
-https://expressjs.com/en/starter/static-files.html
-* basic html & css & javascript reference\
-https://www.w3schools.com
-* basic sql course
-https://www.khanacademy.org/computing/computer-programming/sql
-* shoppping basket lokaal opslaan\
-google op local storage javascript basket
-* bestelling mailen\
-heroku specifieke oplossing, zie aldaar
- 
-## over de tools
-* gitpod online editor en hosting ontwikkelomgeving\
-https://www.gitpod.io/docs/
-* introdution to docker (kennis alleen nodig als je de repo heftig wilt aanpassen)\
-https://docker-curriculum.com
-* yarn (kennis alleen nodig als je de repo heftig wilt aanpassen)\
-https://yarnpkg.com/getting-started
-* heroku hosting productieomgeving\
-https://devcenter.heroku.com/
+In dit repository beheer je het eindproject en plaats je de code voor
+- de server (`server/server-app.js`)
+- de webwidget (`server/public/widget.js`)
+- de knikkerbaan (`knikkerbaan/knikkerbaan.ino`)
 
 
+Het verslag schrijf je in `verslag.md`.
 
-# Je shop op Heroku draaien
+De database ontwerp je in `sql/create_tables`. Voorgegeven data stop je in `sql/seed.sql`
 
-## Setup (alleen de 1e keer)
+Je werkt in dit project actief met GitHub. Dat betekent dat je vanuit issues en het planbord werkt en tijdens het ontwikkelen op een goede manier gebruik maakt van branches en commits.
+Zorg ervoor dat (voor zowel je groepsleden als de docent) altijd duidelijk is waar je mee bezig bent.
 
-### login op Heruko
+Arduino kun je niet ontwikkelen binnen GitPod. Deze code zul je op een andere manier moeten committen in GitPod.
 
-```
-heroku login -i
-```
+## Algemene structuur
+De webwidget en de knikkerbaan geven informatie aan de database en vragen ook informatie daar op.
+De knikkerbaan blijft zo dus werken / informatie naar de database sturen, ook als de widget tijdelijk niet beschikbaar is. 
 
-(note: `heroku login` werkt niet op gitpod) 
+## Server
+De server start en stop je met behulp van de debugger. Klik links op het icon met de kever of kies het menu Debug->Start Debugging. Je kunt breakpoint in je code aanbrengen
+waardoor je programma wordt gepauzeerd en je kunt inspecteren hoe je programma functioneert.
 
-### Maak Heroku app
+## Widget
+Het widget wordt door de server eenmalig als statisch bestand gestuurd naar een browser die erom vraag. De code van de widget wordt niet door GitPod uitgevoerd, maar door het browservenster
+waarin het widget zichtbaar is. Het testen / debuggen van het widget doe je met de optie 'Javascript-console' van je browser. In Chrome vind je die onder het menu 'Weergave->Ontwikkelaar->Javascript-console'
+en in Safari onder 'Ontwikkelaar-> Toon Javascript Console'. Je kunt daar ook breakpoints maken en de inhoud van variabelen inspecteren.
 
-verzin een leuke naam, bv funkywebshop
+## Database
+Voor het uittesten van queries kun je in de terminal van GitPod verbinding maken met je database. Doe dit door het volgende commando in te tikken:
+`psql -d knikkerbaan -U api -W`. Vervolgens gebruik je het wachtwoord 'apipass'. Je zit nu in de database en kunt queries uitvoeren. Lange resultaten
+kun je afbreken met de letter q. Je gaat uit de database met \q. Vergeet niet om achter iedere query een ; te plaatsen. Anders wordt de query bij een
+return niet uitgevoerd.
 
-```
-heroku create funkywebshop
-```
-
-onthoudt de naam van je app (bv `funkywebshop)
-
-het domein wordt dan (https://funkywebshop.herokuapp.com/)
-
-### Maak een database
-
-```
-heroku addons:create heroku-postgresql:hobby-dev
-```
-
-### Kopieer je database naar Heroku
-
-vanaf de project root (/workspace/project-name)\
-project-name is de naam van je repo
-
-```
- cd /workspace/<project-name>
- yarn push:db <app-name>
-```
-
-### Zet je mail configuratie
-
-Je krijgt een email account en wachtwoord 
-
-```
-heroku config:set GMAIL_EMAIL=<email account>
-heroku config:set GMAIL_PASSWORD=<email wachtwoord>
-heroku config:set ORDER_MAIL_TO=<jouw email waar je orders ontvangt>
-```
-
-Dit maakt environment variables in heroku. In gitpod doe je dit met `export  <naam>=<waarde>`  - mailen vanuit gitpod gaat niet, omdat de poort daarvoor geblocked is. 
-
-
-
-### Push de code naar heroku
-
-```
-git push heroku
-```
-
- of gebruik de gitpiod editor (source control> ... > push to > heroku)
-
-### Zet aantal heroku workers naar 1
-
-```
-heroku ps:scale web=1
-```
-
-## Link bestaande app aan Heroku
-Deze commando's run je iedere keer nadat je gitpod opnieuw opstart.
-
-```
-heroku login -i
-```
-
-(note: heroku login werkt niet op gitpod) 
-
-```
-heroku git:remote -a <app-name>
-```
-
-## Notes
-
-### Testing checkout
-
-```
-curl --location --request POST 'https://<workspace>.gitpod.io/api/checkout' \
---header 'Content-Type: application/x-www-form-urlencoded' \
---data-urlencode 'firstName=Robert' \
---data-urlencode 'lastName=Bakker' \
---data-urlencode 'email=robert@bakkerfamily.net' \
---data-urlencode 'articles=1' \
---data-urlencode 'articles=2' \
---data-urlencode 'articles=3'
-```
-### posting data 
-
-onze backend code kan alleen 'x-www-form-urlencoded' aan, voor 'multipart/form-data' default Form-data format moeten we de 'formidable' lib gebruiken 
-(https://www.npmjs.com/package/formidable)
-
-
-### Random images maken
-
-```
-count=1
-while [[ $count -lt 100 ]]
-do
- echo $count
- count=$[$count+1]
- wget -O $count.jpg https://picsum.photos/200/300
-done
-```
-
-## TODO
-
-- [X] deploy to heroku
-- [X] serve static files
-- [x] add some rest calls
-- [ ] more complex model
-- [x] documentation for students
-- [x] automate/optimize heroko deploy
+## Handige links
+* [Tinkercad](https://tinkercad.io) - voor het maken van een virtuele Arduino
+* [KhanAcademy](https://khanacademy.org) - voor sql en javascript / p5js-functies
+* [w3schools](https://w3shools.com) - extra javascript informatie
+* [p5js](https://p5js.org/reference) - naslagmateriaal
+* [Arduino](https://www.arduino.cc/reference) - naslagmateriaal
+* [Arduino Wifi board gebruiksklaar maken](https://www.arduino.cc/en/Guide/ArduinoUnoWiFiRev2)
+* [Arduino Wifi voorbeelden](https://www.arduino.cc/en/Reference/WiFiNINA)

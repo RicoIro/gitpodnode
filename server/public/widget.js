@@ -47,7 +47,10 @@ function checkForDatabaseChanges() {
   request.send()
 }
 
-
+/**
+ * getTotalPresses
+ * Vraagt het totaal aantal buttonPresses op
+ */
 function getTotalPresses() {
   // zet het serverrequest in elkaar
   var request = new XMLHttpRequest()
@@ -57,9 +60,13 @@ function getTotalPresses() {
     if (request.status >= 200 && request.status < 400) {
       console.log(`Totaal aantal buttonPresses = ${data.totalbuttonpresses} `);
       numberOfButtonPresses = data.totalbuttonpresses;
-      console.log(data.lasttimestamp);
-      laatsteUpdateTimeStamp = new Date(data.lasttimestamp).getTime()+1;
+      var newTimeStamp = new Date(data.lasttimestamp).getTime()+1;
 
+      // update indien nodig de timestamp
+      if (laatsteUpdateTimeStamp < newTimeStamp) {
+        laatsteUpdateTimeStamp = newTimeStamp;
+      }
+      
     }
     else {
         console.log("bleh, server reageert niet zoals gehoopt");
